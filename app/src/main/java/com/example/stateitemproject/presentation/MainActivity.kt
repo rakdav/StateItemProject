@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private fun showList(list:List<StateItem>){
         binding.list.removeAllViews()
         var linearLayoutManager=LinearLayoutManager(this)
-        val adapter=StateItemAdapter(this,list)
+        val adapter=StateItemAdapter(list)
         binding.list.layoutManager=linearLayoutManager
         binding.list.adapter=adapter
     }
