@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Countries</string>
+    <string name="count_hint">Capital:</string>
+    <string name="save_btn">Save</string>
+    <string name="name_hint">Name:</string>
+</resources>
