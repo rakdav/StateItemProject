@@ -7,84 +7,34 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.stateitemproject.R
 import com.example.stateitemproject.databinding.ActivityStateItemBinding
 
-class StateItemActivity : AppCompatActivity() {
+class StateItemActivity : AppCompatActivity(),StateItemFragment.OnEditingFinishedListener {
     private lateinit var viewModel: StateItemViewModel
     private lateinit var binding: ActivityStateItemBinding
     private var screenMode=MODE_UNKNOWN
-    private var stateItemId=0
+    private var stateItemId=-1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityStateItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
         parseIntent()
-        viewModel=ViewModelProvider(this)[StateItemViewModel::class.java]
-        AddTextChangedListeners()
-        launchRightMode()
-        observeViewModel()
-    }
-    private fun AddTextChangedListeners(){
-        binding.etName.addTextChangedListener(object:TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetErrorInputName()
-            }
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
-        binding.etCapital.addTextChangedListener(object:TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetErrorInputCapital()
-            }
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
-    }
-    private fun observeViewModel(){
-        viewModel.errorInputName.observe(this){
-            val mes=if(it){
-                "Is not correct data"
-            }
-            else null
-            binding.tilName.error=mes
-        }
-        viewModel.errorInputCapital.observe(this){
-            val mes=if(it){
-                "Is not correct data"
-            }
-            else null
-            binding.tilCapital.error=mes
-        }
-        viewModel.shouldCloseScreen.observe(this) {
-            finish()
+        if (savedInstanceState == null) {
+            launchRightMode()
         }
     }
-    private fun launchRightMode(){
-        when(screenMode){
-            MODE_EDIT->launchEditMode()
-            MODE_ADD->launchAddMode()
+    private fun launchRightMode() {
+        val fragment = when (screenMode) {
+            MODE_EDIT -> StateItemFragment.newInstanceEditItem(stateItemId)
+            MODE_ADD  -> StateItemFragment.newInstanceAddItem()
+            else      -> throw RuntimeException("Unknown screen mode $screenMode")
         }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.state_item_container, fragment)
+            .commit()
     }
-    private fun launchEditMode(){
-        viewModel.getStateItem(stateItemId)
-        viewModel.stateItem.observe(this){
-            binding.etName.setText(it.name)
-            binding.etCapital.setText(it.capital)
-        }
-        binding.saveButton.setOnClickListener {
-            viewModel.editStateItem(binding.etName.text.toString(),
-                binding.etCapital.text.toString())
-        }
-    }
-    private fun launchAddMode(){
-        binding.saveButton.setOnClickListener {
-            viewModel.addStateItem(binding.etName.text.toString(),binding.etCapital.text.toString())
-        }
-    }
+
     private fun parseIntent(){
         if(!intent.hasExtra(EXTRA_SCREEN_MODE)){
             throw RuntimeException("Param screen mode is absent")
@@ -121,5 +71,9 @@ class StateItemActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_STATE_ITEM_ID,stateItemId)
             return intent
         }
+    }
+
+    override fun onEditingFinished() {
+        finish()
     }
 }
