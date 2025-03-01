@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.stateitemproject.R
 import com.example.stateitemproject.domain.StateItem
 import com.example.stateitemproject.domain.StateListRepository
-
+//Room
 object StateListRepositoryImpl:StateListRepository {
     private val stateList= sortedSetOf<StateItem>({o1,o2->o1.id.compareTo(o2.id)})
     private val stateListID=MutableLiveData<List<StateItem>>()
