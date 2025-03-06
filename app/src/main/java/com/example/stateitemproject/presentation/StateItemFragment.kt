@@ -1,5 +1,6 @@
 package com.example.stateitemproject.presentation
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -7,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.stateitemproject.R
@@ -19,6 +21,7 @@ class StateItemFragment : Fragment() {
     private lateinit var binding: FragmentStateItemBinding
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = -1
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

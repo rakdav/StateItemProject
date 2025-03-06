@@ -1,5 +1,8 @@
 package com.example.stateitemproject.presentation
 
+import android.app.Application
+import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +20,7 @@ class StateItemViewModel:ViewModel() {
     private val addStateItemUseCase=AddStateItemUseCase(repository)
     private val editStateItemUseCase=EditStateItemUseCase(repository)
     private val getStateListUseCase=GetStateListUseCase(repository)
+
 
     private val _errorInputName=MutableLiveData<Boolean>()
     val errorInputName:LiveData<Boolean>
@@ -43,9 +47,16 @@ class StateItemViewModel:ViewModel() {
         val capital=parseString(inputCapital)
         val fieldsValue=validateInput(name,capital)
         if(fieldsValue){
-            val id=getStateListUseCase.getStateList().value!!.size
-            val stateItem=StateItem(id+1,name,capital,R.drawable.russia)
-            addStateItemUseCase.addStateItem(stateItem)
+            if (getStateListUseCase.getStateList().value!=null) {
+                val id = getStateListUseCase.getStateList().value!!.size
+                val stateItem = StateItem(id + 1, name, capital, R.drawable.russia)
+                addStateItemUseCase.addStateItem(stateItem)
+            }
+            else
+            {
+                val stateItem = StateItem(1, name, capital, R.drawable.russia)
+                addStateItemUseCase.addStateItem(stateItem)
+            }
             finishWork()
         }
     }
